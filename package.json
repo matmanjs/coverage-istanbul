@@ -1,0 +1,36 @@
+{
+  "name": "coverage-istanbul",
+  "version": "1.0.0",
+  "description": "istanbul tools for test coverage",
+  "main": "lib/index.js",
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "build": "babel ./src --out-dir ./lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matmanjs/coverage-istanbul.git"
+  },
+  "keywords": [
+    "istanbul",
+    "coverage"
+  ],
+  "author": "helinjiang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/matmanjs/coverage-istanbul/issues"
+  },
+  "homepage": "https://github.com/matmanjs/coverage-istanbul#readme",
+  "dependencies": {
+    "glob": "^7.1.6",
+    "istanbul": "^0.4.5",
+    "istanbul-lib-coverage": "^3.0.0",
+    "istanbul-lib-source-maps": "^4.0.0",
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0"
+  }
+}
