@@ -6,7 +6,7 @@ import glob from 'glob';
 import istanbulLibCoverage from 'istanbul-lib-coverage';
 import istanbulLibSourceMaps from 'istanbul-lib-source-maps';
 
-import { mergeClientCoverage, getCoverageInfo, ICoverageMap } from './util';
+import { getCoverageInfo, ICoverageMap, mergeClientCoverage } from './util';
 
 const mapStore = istanbulLibSourceMaps.createSourceMapStore({});
 
@@ -27,7 +27,7 @@ function createE2ECoverage(globPattern: string, opts: ICreateE2ECoverageOpts) {
     let coverage: ICoverageMap;
 
     // options is optional
-    glob(globPattern, {}, function (err, files) {
+    glob(globPattern, {}, function(err, files) {
       // console.log(files);
       if (err) {
         return reject(err);
@@ -69,7 +69,7 @@ function createE2ECoverage(globPattern: string, opts: ICreateE2ECoverageOpts) {
           reporter.dir = opts?.dir || './coverage';
           reporter.add('lcovonly');
           reporter.addAll(['clover', 'cobertura', 'html']);
-          reporter.write(collector, sync, function () {
+          reporter.write(collector, sync, function() {
             // console.log('done');
             resolve({
               data: coverageInfo,
@@ -89,6 +89,4 @@ function createE2ECoverage(globPattern: string, opts: ICreateE2ECoverageOpts) {
   });
 }
 
-module.exports = {
-  createE2ECoverage,
-};
+export { createE2ECoverage };
