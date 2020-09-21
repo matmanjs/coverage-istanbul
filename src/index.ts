@@ -6,12 +6,17 @@ import glob from 'glob';
 import istanbulLibCoverage from 'istanbul-lib-coverage';
 import istanbulLibSourceMaps from 'istanbul-lib-source-maps';
 
-import { getCoverageInfo, ICoverageMap, mergeClientCoverage } from './util';
+import { getCoverageInfo, ICoverageMap, ICoverageResultInfo, mergeClientCoverage } from './util';
 
 const mapStore = istanbulLibSourceMaps.createSourceMapStore({});
 
-interface ICreateE2ECoverageOpts {
+export interface ICreateE2ECoverageOpts {
   dir?: string;
+}
+
+export interface IE2ECoverageResult {
+  data: ICoverageResultInfo,
+  reporterDir: string,
 }
 
 /**
@@ -21,7 +26,10 @@ interface ICreateE2ECoverageOpts {
  * @param {Object} [opts]
  * @param {String} [opts.dir] 覆盖率文件输出目录，默认值为 ./coverage
  */
-function createE2ECoverage(globPattern: string, opts: ICreateE2ECoverageOpts) {
+export function createE2ECoverage(
+  globPattern: string,
+  opts: ICreateE2ECoverageOpts
+):Promise<IE2ECoverageResult> {
   return new Promise((resolve, reject) => {
     const collector = new istanbul.Collector();
     let coverage: ICoverageMap;
@@ -88,5 +96,3 @@ function createE2ECoverage(globPattern: string, opts: ICreateE2ECoverageOpts) {
     });
   });
 }
-
-export { createE2ECoverage };
