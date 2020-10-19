@@ -29,13 +29,13 @@ export interface IE2ECoverageResult {
 export function createE2ECoverage(
   globPattern: string,
   opts: ICreateE2ECoverageOpts
-):Promise<IE2ECoverageResult> {
+): Promise<IE2ECoverageResult> {
   return new Promise((resolve, reject) => {
     const collector = new istanbul.Collector();
     let coverage: ICoverageMap;
 
     // options is optional
-    glob(globPattern, {}, function(err, files) {
+    glob(globPattern, {}, function (err, files) {
       // console.log(files);
       if (err) {
         return reject(err);
@@ -75,23 +75,40 @@ export function createE2ECoverage(
           const sync = true;
           const reporter = new istanbul.Reporter();
           reporter.dir = opts?.dir || './coverage';
-          reporter.add('lcovonly');
-          reporter.addAll(['clover', 'cobertura', 'html']);
-          reporter.write(collector, sync, function() {
-            // console.log('done');
-            resolve({
-              data: coverageInfo,
-              reporterDir: reporter.dir,
-            });
+          reporter.addAll(['lcovonly', 'clover', 'cobertura', 'text-summary']);
+          reporter.write(collector, sync, function () {
+            // 注意 ts 下设置  "esModuleInterop": true 之后使用 html 则会报错的，
+            // 因此在这里保护一下，但还是没解决本质问题，待后续解决
+            const reporterForHtml = new istanbul.Reporter();
+            reporterForHtml.dir = reporter.dir;
+            reporterForHtml.add('html');
+
+            try {
+              reporterForHtml.write(collector, sync, function () {
+                resolve({
+                  data: coverageInfo,
+                  reporterDir: reporter.dir,
+                });
+              });
+            } catch (err) {
+              if (process.env.DEBUG_COVERAGE) {
+                console.log('--reporterForHtml err--', err);
+              }
+              console.log('Try to write html for coverage reporter failed!', (err?.message || err));
+
+              resolve({
+                data: coverageInfo,
+                reporterDir: reporter.dir,
+              });
+            }
           });
         })
         .catch(err => {
           reject(err);
         });
 
-      // console.log(transformed)
-      if (process.env.DEBUG) {
-        console.log('--', typeof transformed);
+      if (process.env.DEBUG_COVERAGE) {
+        console.log('--typeof transformed--', typeof transformed);
       }
     });
   });
