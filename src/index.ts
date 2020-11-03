@@ -64,8 +64,17 @@ export function createE2ECoverage(
           // console.log(JSON.parse(JSON.stringify(result)))
           const final_coverage = JSON.parse(JSON.stringify(result));
 
+          // 部分项目coverage_out转换出来的final_coverage会被挂载在data上面，此处做兼容
+          const final_coverage_comp: any = {};
+          Object.keys(final_coverage).forEach((key) => {
+              if (final_coverage[key].data) {
+                  final_coverage_comp[key] = final_coverage[key].data;
+              } else {
+                  final_coverage_comp[key] = final_coverage[key];
+              }
+          });
           // 追加
-          collector.add(final_coverage);
+          collector.add(final_coverage_comp);
 
           // 获取关键信息
           const coverageInfo = getCoverageInfo(collector);
